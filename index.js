@@ -5,10 +5,6 @@ const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
 const multer = require("multer");
-const jwt = require("express-jwt");
-const jwks = require("jwks-rsa");
-const guard = require("express-jwt-permissions")();
-const oAuth = require("./middleware/oAuth")
 app.use(cors());
 app.use(express.json());
 
@@ -21,45 +17,6 @@ const db = mysql.createConnection({
   database: "tweets",
 });
 
-// connect to Authorization API
-// var jwtCheck = jwt({
-//   secret: jwks.expressJwtSecret({
-//     cache: true,
-//     rateLimit: true,
-//     jwksRequestsPerMinute: 5,
-//     jwksUri: "https://zwitscher.us.auth0.com/.well-known/jwks.json",
-//   }),
-//   audience: "https://www.zwitscherapi.com",
-//   issuer: "https://zwitscher.us.auth0.com/",
-//   algorithms: ["RS256"],
-// });
-
-// app.use(jwtCheck);
-
-// app.use(oAuth);
-
-//check permissions guard middlewhare
-const zwitscherAPIEndpoint = "http://localhost:8080/challenges";
-app.get("/challenges", async (req, res) => {
-  try {
-    const { access_token } = req.oauth;
-    const response = await axios({ method: "get", url: zwitscherAPIEndpoint });
-    res.json(response.data);
-  } catch (error) {
-    console.log(error);
-    if (error.response.status === 401) {
-      res.status(401).json("Unauthorized to access data");
-    } else if (error.response.status === 403) {
-      res.status(403).json("Permission denied");
-    } else {
-      res.status(500).json("Upsie, my bad. imma fix that later...");
-    }
-  }
-});
-
-app.get("/zwitscher", guard.check(["read:tweets"]), function (req, res) {
-  res.json({ tweet: "this is the first tweet" });
-});
 
 // deleting all tweets and images in the upload folder
 const directory = "../client/public/uploads";
