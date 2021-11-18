@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require("express");
 const app = express(); // use express as app
 const mysql = require("mysql");
@@ -11,10 +12,10 @@ app.use(express.json());
 
 //connecting to the database
 const db = mysql.createConnection({
-  user: "root",
-  host: "localhost",
-  password: "password",
-  database: "tweets",
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
 });
 
 
